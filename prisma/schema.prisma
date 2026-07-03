@@ -1,0 +1,54 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model Usuario {
+  id_usuario          Int           @id @default(autoincrement())
+  nombre              String        @db.VarChar(100)
+  apellido            String        @db.VarChar(100)
+  correo              String        @unique @db.VarChar(150)
+  password_hash       String
+  rol                 String        @db.VarChar(20)
+  activo              Boolean       @default(true)
+  fecha_creacion      DateTime      @default(now()) @db.Timestamp(6)
+  fecha_actualizacion DateTime      @default(now()) @db.Timestamp(6)
+  reservaciones       Reservacion[]
+
+  @@map("usuarios")
+}
+
+model Mesa {
+  id_mesa             Int           @id @default(autoincrement())
+  numero_mesa         Int           @unique
+  capacidad           Int
+  ubicacion           String?       @db.VarChar(100)
+  descripcion         String?
+  activa              Boolean       @default(true)
+  fecha_creacion      DateTime      @default(now()) @db.Timestamp(6)
+  fecha_actualizacion DateTime      @default(now()) @db.Timestamp(6)
+  reservaciones       Reservacion[]
+
+  @@map("mesas")
+}
+
+model Reservacion {
+  id_reservacion      Int      @id @default(autoincrement())
+  id_usuario          Int
+  id_mesa             Int
+  fecha_reservacion   DateTime @db.Date
+  hora_reservacion    DateTime @db.Time(6)
+  cantidad_personas   Int
+  estado              String   @default("pendiente") @db.VarChar(20)
+  observaciones       String?
+  fecha_creacion      DateTime @default(now()) @db.Timestamp(6)
+  fecha_actualizacion DateTime @default(now()) @db.Timestamp(6)
+  mesa                Mesa     @relation(fields: [id_mesa], references: [id_mesa], onDelete: NoAction, onUpdate: NoAction, map: "fk_reservaciones_mesas")
+  usuario             Usuario  @relation(fields: [id_usuario], references: [id_usuario], onDelete: NoAction, onUpdate: NoAction, map: "fk_reservaciones_usuarios")
+
+  @@unique([id_mesa, fecha_reservacion, hora_reservacion], map: "uq_mesa_fecha_hora")
+  @@map("reservaciones")
+}

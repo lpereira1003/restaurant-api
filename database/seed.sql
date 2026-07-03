@@ -1,0 +1,2 @@
+-- Datos iniciales opcionales.
+-- Crear usuarios desde POST /api/auth/register para guardar password_hash con bcrypt.
