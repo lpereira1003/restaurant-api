@@ -23,6 +23,20 @@ app.use(morgan(env.nodeEnv === 'production' ? 'combined' : 'dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+/**
+ * @swagger
+ * /api/health:
+ *   get:
+ *     tags: [Health]
+ *     summary: Verificar estado de la API
+ *     responses:
+ *       200:
+ *         description: API funcionando correctamente
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ApiResponse'
+ */
 app.get('/api/health', (_req, res) => {
   return successResponse(res, 200, 'API funcionando correctamente', {
     environment: env.nodeEnv

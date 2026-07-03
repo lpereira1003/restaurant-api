@@ -1,20 +1,28 @@
 # API REST de Reservaciones de Restaurante
 
-API REST en Node.js, TypeScript y Express para autenticacion, mesas y reservaciones de restaurante. Usa PostgreSQL con `pg`, JWT y bcrypt. No usa ORM.
+API REST en Node.js, TypeScript y Express para autenticacion, mesas y reservaciones de restaurante. Usa PostgreSQL con Prisma Client, JWT y bcrypt.
 
 ## Stack
 
 - Node.js + TypeScript
 - Express
-- PostgreSQL con `pg`
+- PostgreSQL con Prisma Client
 - JWT
 - bcrypt
+- Zod
 - Swagger UI
 - dotenv, cors, helmet, morgan
 - pnpm
 - ESLint y Prettier
 
 ## Instalacion
+
+Requisitos:
+
+- Node.js compatible con el proyecto.
+- pnpm.
+- PostgreSQL en ejecucion.
+- Base de datos `restaurant_reservations_db` creada.
 
 ```bash
 pnpm install
@@ -34,6 +42,8 @@ Copy-Item .env.example .env
 
 ## Variables de entorno
 
+El archivo `.env.example` contiene las variables necesarias para ejecutar el proyecto. Copialo a `.env` y ajusta los valores segun tu entorno local o de produccion.
+
 ```env
 NODE_ENV=development
 PORT=3000
@@ -42,9 +52,27 @@ DATABASE_URL="postgresql://postgres:root@localhost:5432/restaurant_reservations_
 
 JWT_SECRET=cambia-este-secreto-en-produccion
 JWT_EXPIRES_IN=1d
-BCRYPT_SALT_ROUNDS=10
+BCRYPT_SALT_ROUNDS=12
 CORS_ORIGIN=*
 ```
+
+Variables principales:
+
+- `DATABASE_URL`: cadena de conexion PostgreSQL usada por Prisma.
+- `JWT_SECRET`: secreto para firmar y verificar JWT. En produccion debe cambiarse.
+- `JWT_EXPIRES_IN`: tiempo de expiracion del token.
+- `BCRYPT_SALT_ROUNDS`: factor de costo bcrypt. El proyecto fuerza minimo `12`.
+- `CORS_ORIGIN`: origen permitido para CORS. Usa `*` en desarrollo o una lista separada por comas.
+
+## Credenciales de prueba
+
+Administrador
+
+Correo:
+`admin.123@email.com`
+
+Contrasena:
+`admin123*`
 
 ## Base de datos real
 
@@ -128,6 +156,24 @@ pnpm lint
 pnpm format
 ```
 
+Validacion:
+
+```bash
+pnpm prisma generate
+pnpm prisma validate
+pnpm typecheck
+pnpm build
+```
+
+Archivos excluidos por `.gitignore`:
+
+- `.env`
+- `.idea`
+- `node_modules`
+- `dist`
+- `server.log`
+- logs y archivos generados por npm
+
 ## Endpoints principales
 
 Health check:
@@ -140,6 +186,12 @@ Swagger:
 
 ```text
 GET /api-docs
+```
+
+Coleccion Postman:
+
+```text
+docs/postman/restaurant-reservations.postman_collection.json
 ```
 
 Auth:
@@ -173,6 +225,12 @@ Reservaciones:
 - El token JWT incluye `id_usuario`, `correo` y `rol`.
 - El cliente solo consulta sus propias reservaciones.
 - El cliente solo cancela sus propias reservaciones.
+
+## Roadmap
+
+- Desplegar API en produccion con base de datos remota, variables de entorno configuradas, `/api-docs` accesible publicamente y endpoints verificados en la URL de produccion.
+- Publicar el repositorio en GitHub como repositorio publico.
+- Completar historial de commits progresivo hasta al menos 8 commits significativos.
 
 ## Estructura del proyecto
 

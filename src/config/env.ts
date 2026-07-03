@@ -19,7 +19,7 @@ export const env = {
     expiresIn: process.env.JWT_EXPIRES_IN ?? '1d'
   },
   bcrypt: {
-    saltRounds: Number(process.env.BCRYPT_SALT_ROUNDS ?? 10)
+    saltRounds: Math.max(12, Number(process.env.BCRYPT_SALT_ROUNDS ?? 12))
   },
   cors: {
     origin: process.env.CORS_ORIGIN ?? '*'

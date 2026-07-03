@@ -1,8 +1,9 @@
 import { Router } from 'express';
 import { authenticate } from '../../middlewares/auth.middleware.js';
 import { authorizeRoles } from '../../middlewares/role.middleware.js';
-import { requireBodyFields, validate } from '../../middlewares/validate.middleware.js';
+import { validateSchema } from '../../middlewares/validate.middleware.js';
 import * as mesasController from './mesas.controller.js';
+import { createMesaSchema, mesaIdParamsSchema, updateMesaSchema } from './mesas.schemas.js';
 
 export const mesasRouter = Router();
 
@@ -42,7 +43,7 @@ mesasRouter.get('/', mesasController.findAll);
  *       404:
  *         description: Mesa no encontrada
  */
-mesasRouter.get('/:id', mesasController.findById);
+mesasRouter.get('/:id', validateSchema({ params: mesaIdParamsSchema }), mesasController.findById);
 
 /**
  * @swagger
@@ -76,7 +77,7 @@ mesasRouter.post(
   '/',
   authenticate,
   authorizeRoles('admin'),
-  validate(requireBodyFields('numero_mesa', 'capacidad')),
+  validateSchema({ body: createMesaSchema }),
   mesasController.create
 );
 
@@ -113,7 +114,13 @@ mesasRouter.post(
  *       404:
  *         description: Mesa no encontrada
  */
-mesasRouter.put('/:id', authenticate, authorizeRoles('admin'), mesasController.update);
+mesasRouter.put(
+  '/:id',
+  authenticate,
+  authorizeRoles('admin'),
+  validateSchema({ params: mesaIdParamsSchema, body: updateMesaSchema }),
+  mesasController.update
+);
 
 /**
  * @swagger
@@ -136,4 +143,10 @@ mesasRouter.put('/:id', authenticate, authorizeRoles('admin'), mesasController.u
  *       404:
  *         description: Mesa no encontrada
  */
-mesasRouter.delete('/:id', authenticate, authorizeRoles('admin'), mesasController.softDelete);
+mesasRouter.delete(
+  '/:id',
+  authenticate,
+  authorizeRoles('admin'),
+  validateSchema({ params: mesaIdParamsSchema }),
+  mesasController.softDelete
+);

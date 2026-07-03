@@ -10,6 +10,10 @@ export const swaggerSpec = swaggerJSDoc({
     },
     servers: [
       {
+        url: '/',
+        description: 'Servidor actual'
+      },
+      {
         url: 'http://localhost:3000',
         description: 'Servidor local'
       }
@@ -84,7 +88,27 @@ export const swaggerSpec = swaggerJSDoc({
           }
         }
       }
+    },
+    paths: {
+      '/api/health': {
+        get: {
+          tags: ['Health'],
+          summary: 'Verificar estado de la API',
+          responses: {
+            200: {
+              description: 'API funcionando correctamente',
+              content: {
+                'application/json': {
+                  schema: {
+                    $ref: '#/components/schemas/ApiResponse'
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
     }
   },
-  apis: ['src/modules/**/*.routes.ts']
+  apis: ['src/app.ts', 'src/modules/**/*.routes.ts']
 });

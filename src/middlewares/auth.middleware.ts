@@ -1,7 +1,12 @@
 import { NextFunction, Request, Response } from 'express';
+import { JsonWebTokenError, TokenExpiredError } from 'jsonwebtoken';
 import { verifyToken } from '../utils/jwt.js';
 import { errorResponse } from '../utils/responses.js';
 
+/**
+ * Valida el Bearer token y adjunta el payload JWT a req.user.
+ * Distingue token ausente, expirado e invalido para respuestas 401 mas precisas.
+ */
 export const authenticate = (req: Request, res: Response, next: NextFunction) => {
   const authHeader = req.headers.authorization;
 
@@ -13,7 +18,15 @@ export const authenticate = (req: Request, res: Response, next: NextFunction) =>
     const token = authHeader.split(' ')[1];
     req.user = verifyToken(token);
     return next();
-  } catch {
-    return errorResponse(res, 401, 'Token invalido o expirado');
+  } catch (error) {
+    if (error instanceof TokenExpiredError) {
+      return errorResponse(res, 401, 'Token expirado');
+    }
+
+    if (error instanceof JsonWebTokenError) {
+      return errorResponse(res, 401, 'Token invalido');
+    }
+
+    return errorResponse(res, 401, 'Token no se pudo verificar');
   }
 };

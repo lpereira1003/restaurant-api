@@ -1,7 +1,8 @@
 import { Router } from 'express';
 import { authenticate } from '../../middlewares/auth.middleware.js';
-import { requireBodyFields, validate } from '../../middlewares/validate.middleware.js';
+import { validateSchema } from '../../middlewares/validate.middleware.js';
 import * as authController from './auth.controller.js';
+import { loginSchema, registerSchema } from './auth.schemas.js';
 
 export const authRouter = Router();
 
@@ -28,9 +29,9 @@ export const authRouter = Router();
  *             properties:
  *               nombre: { type: string, example: "Ana" }
  *               apellido: { type: string, example: "Perez" }
- *               correo: { type: string, example: "ana@email.com" }
+ *               correo: { type: string, example: "cliente@email.com" }
  *               password: { type: string, example: "Password123" }
- *               rol: { type: string, enum: [cliente, admin], example: "cliente" }
+ *               rol: { type: string, enum: [cliente], example: "cliente" }
  *     responses:
  *       201:
  *         description: Usuario registrado
@@ -41,7 +42,7 @@ export const authRouter = Router();
  */
 authRouter.post(
   '/register',
-  validate(requireBodyFields('nombre', 'apellido', 'correo', 'password')),
+  validateSchema({ body: registerSchema }),
   authController.register
 );
 
@@ -59,15 +60,15 @@ authRouter.post(
  *             type: object
  *             required: [correo, password]
  *             properties:
- *               correo: { type: string, example: "ana@email.com" }
- *               password: { type: string, example: "Password123" }
+ *               correo: { type: string, example: "admin.123@email.com" }
+ *               password: { type: string, example: "admin123*" }
  *     responses:
  *       200:
  *         description: Login correcto
  *       401:
  *         description: Credenciales invalidas
  */
-authRouter.post('/login', validate(requireBodyFields('correo', 'password')), authController.login);
+authRouter.post('/login', validateSchema({ body: loginSchema }), authController.login);
 
 /**
  * @swagger

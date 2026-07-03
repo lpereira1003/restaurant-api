@@ -1,0 +1,285 @@
+{
+  "info": {
+    "name": "Restaurant Reservations API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:3000"
+    },
+    {
+      "key": "adminToken",
+      "value": ""
+    },
+    {
+      "key": "clienteToken",
+      "value": ""
+    }
+  ],
+  "item": [
+    {
+      "name": "Health",
+      "request": {
+        "method": "GET",
+        "url": "{{baseUrl}}/api/health"
+      }
+    },
+    {
+      "name": "Auth",
+      "item": [
+        {
+          "name": "Register Cliente",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"Cliente\",\n  \"apellido\": \"Prueba\",\n  \"correo\": \"cliente.prueba@email.com\",\n  \"password\": \"Password123\"\n}"
+            },
+            "url": "{{baseUrl}}/api/auth/register"
+          }
+        },
+        {
+          "name": "Login Admin",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"correo\": \"admin.123@email.com\",\n  \"password\": \"admin123*\"\n}"
+            },
+            "url": "{{baseUrl}}/api/auth/login"
+          }
+        },
+        {
+          "name": "Perfil",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{clienteToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "url": "{{baseUrl}}/api/auth/perfil"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Mesas",
+      "item": [
+        {
+          "name": "Listar Mesas",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/mesas"
+          }
+        },
+        {
+          "name": "Detalle Mesa",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/mesas/1"
+          }
+        },
+        {
+          "name": "Crear Mesa",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{adminToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"numero_mesa\": 20,\n  \"capacidad\": 4,\n  \"ubicacion\": \"Terraza\",\n  \"descripcion\": \"Mesa de prueba\"\n}"
+            },
+            "url": "{{baseUrl}}/api/mesas"
+          }
+        },
+        {
+          "name": "Actualizar Mesa",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{adminToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"capacidad\": 6,\n  \"ubicacion\": \"Salon principal\"\n}"
+            },
+            "url": "{{baseUrl}}/api/mesas/1"
+          }
+        },
+        {
+          "name": "Desactivar Mesa",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{adminToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "DELETE",
+            "url": "{{baseUrl}}/api/mesas/1"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Reservaciones",
+      "item": [
+        {
+          "name": "Crear Reservacion",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{clienteToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"id_mesa\": 1,\n  \"fecha_reservacion\": \"2026-07-15\",\n  \"hora_reservacion\": \"19:30:00\",\n  \"cantidad_personas\": 2,\n  \"observaciones\": \"Prueba\"\n}"
+            },
+            "url": "{{baseUrl}}/api/reservaciones"
+          }
+        },
+        {
+          "name": "Mis Reservaciones",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{clienteToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "url": "{{baseUrl}}/api/reservaciones/mis"
+          }
+        },
+        {
+          "name": "Listar Reservaciones Admin",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{adminToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "url": "{{baseUrl}}/api/reservaciones?estado=pendiente"
+          }
+        },
+        {
+          "name": "Cambiar Estado",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{adminToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"estado\": \"confirmada\"\n}"
+            },
+            "url": "{{baseUrl}}/api/reservaciones/1/estado"
+          }
+        },
+        {
+          "name": "Cancelar Reservacion Propia",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{clienteToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "DELETE",
+            "url": "{{baseUrl}}/api/reservaciones/1"
+          }
+        }
+      ]
+    }
+  ]
+}

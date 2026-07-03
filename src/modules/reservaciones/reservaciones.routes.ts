@@ -1,8 +1,14 @@
 import { Router } from 'express';
 import { authenticate } from '../../middlewares/auth.middleware.js';
 import { authorizeRoles } from '../../middlewares/role.middleware.js';
-import { requireBodyFields, validate } from '../../middlewares/validate.middleware.js';
+import { validateSchema } from '../../middlewares/validate.middleware.js';
 import * as reservacionesController from './reservaciones.controller.js';
+import {
+  createReservacionSchema,
+  findReservacionesQuerySchema,
+  reservacionIdParamsSchema,
+  updateEstadoReservacionSchema
+} from './reservaciones.schemas.js';
 
 export const reservacionesRouter = Router();
 
@@ -48,7 +54,7 @@ reservacionesRouter.post(
   '/',
   authenticate,
   authorizeRoles('cliente'),
-  validate(requireBodyFields('id_mesa', 'fecha_reservacion', 'hora_reservacion', 'cantidad_personas')),
+  validateSchema({ body: createReservacionSchema }),
   reservacionesController.create
 );
 
@@ -81,13 +87,34 @@ reservacionesRouter.get(
  *     summary: Listar todas las reservaciones como admin
  *     security:
  *       - bearerAuth: []
+ *     parameters:
+ *       - in: query
+ *         name: estado
+ *         schema:
+ *           type: string
+ *           enum: [pendiente, confirmada, cancelada, completada, rechazada]
+ *       - in: query
+ *         name: id_usuario
+ *         schema: { type: integer }
+ *       - in: query
+ *         name: id_mesa
+ *         schema: { type: integer }
+ *       - in: query
+ *         name: fecha_reservacion
+ *         schema: { type: string, format: date }
  *     responses:
  *       200:
  *         description: Reservaciones obtenidas correctamente
  *       403:
  *         description: Requiere rol admin
  */
-reservacionesRouter.get('/', authenticate, authorizeRoles('admin'), reservacionesController.findAll);
+reservacionesRouter.get(
+  '/',
+  authenticate,
+  authorizeRoles('admin'),
+  validateSchema({ query: findReservacionesQuerySchema }),
+  reservacionesController.findAll
+);
 
 /**
  * @swagger
@@ -128,7 +155,7 @@ reservacionesRouter.put(
   '/:id/estado',
   authenticate,
   authorizeRoles('admin'),
-  validate(requireBodyFields('estado')),
+  validateSchema({ params: reservacionIdParamsSchema, body: updateEstadoReservacionSchema }),
   reservacionesController.updateEstado
 );
 
@@ -157,5 +184,6 @@ reservacionesRouter.delete(
   '/:id',
   authenticate,
   authorizeRoles('cliente'),
+  validateSchema({ params: reservacionIdParamsSchema }),
   reservacionesController.cancelMine
 );

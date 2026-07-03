@@ -2,6 +2,10 @@ import { NextFunction, Request, Response } from 'express';
 import { Role } from '../modules/auth/auth.types.js';
 import { errorResponse } from '../utils/responses.js';
 
+/**
+ * Restringe una ruta a uno o mas roles ya autenticados.
+ * Debe ejecutarse despues de authenticate para tener req.user disponible.
+ */
 export const authorizeRoles = (...allowedRoles: Role[]) => {
   return (req: Request, res: Response, next: NextFunction) => {
     if (!req.user) {

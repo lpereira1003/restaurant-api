@@ -16,17 +16,50 @@ const estadosValidos: EstadoReservacion[] = [
   'rechazada'
 ];
 
-const toDateOnly = (value: string) => new Date(`${value}T00:00:00.000Z`);
+const validateId = (id: number, entity = 'reservacion') => {
+  if (!Number.isInteger(id) || id <= 0) {
+    throw new AppError(400, `Id de ${entity} invalido`);
+  }
+};
+
+const toDateOnly = (value: string) => {
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(value)) {
+    throw new AppError(400, 'La fecha de reservacion debe tener formato YYYY-MM-DD');
+  }
+
+  const date = new Date(`${value}T00:00:00.000Z`);
+
+  if (Number.isNaN(date.getTime()) || date.toISOString().slice(0, 10) !== value) {
+    throw new AppError(400, 'La fecha de reservacion es invalida');
+  }
+
+  return date;
+};
 
 const toTimeOnly = (value: string) => {
+  if (!/^\d{2}:\d{2}(:\d{2})?$/.test(value)) {
+    throw new AppError(400, 'La hora de reservacion debe tener formato HH:mm o HH:mm:ss');
+  }
+
   const [hours, minutes, seconds = '0'] = value.split(':');
-  return new Date(Date.UTC(1970, 0, 1, Number(hours), Number(minutes), Number(seconds)));
+  const hour = Number(hours);
+  const minute = Number(minutes);
+  const second = Number(seconds);
+
+  if (hour > 23 || minute > 59 || second > 59) {
+    throw new AppError(400, 'La hora de reservacion es invalida');
+  }
+
+  return new Date(Date.UTC(1970, 0, 1, hour, minute, second));
 };
 
 const formatDateOnly = (value: Date) => value.toISOString().slice(0, 10);
 
 const formatTimeOnly = (value: Date) => value.toISOString().slice(11, 19);
 
+/**
+ * Convierte los Date internos de Prisma/PostgreSQL a formato estable para la API.
+ */
 const toReservacionResponse = (reservacion: {
   id_reservacion: number;
   id_usuario: number;
@@ -46,7 +79,17 @@ const toReservacionResponse = (reservacion: {
   observaciones: reservacion.observaciones ?? undefined
 });
 
+/**
+ * Crea una reservacion validando mesa activa, capacidad y disponibilidad por fecha/hora.
+ * La DB tambien protege contra duplicados con una restriccion unique.
+ */
 export const create = async (user: JwtPayload, payload: CreateReservacionDto) => {
+  validateId(payload.id_mesa, 'mesa');
+
+  if (!Number.isInteger(payload.cantidad_personas) || payload.cantidad_personas <= 0) {
+    throw new AppError(400, 'La cantidad de personas debe ser un entero positivo');
+  }
+
   const mesa = await prisma.mesa.findUnique({
     where: {
       id_mesa: payload.id_mesa
@@ -108,6 +151,9 @@ export const create = async (user: JwtPayload, payload: CreateReservacionDto) =>
   }
 };
 
+/**
+ * Lista solo las reservaciones del cliente autenticado.
+ */
 export const findMine = async (user: JwtPayload) => {
   const reservaciones = await prisma.reservacion.findMany({
     where: {
@@ -119,15 +165,62 @@ export const findMine = async (user: JwtPayload) => {
   return reservaciones.map(toReservacionResponse);
 };
 
-export const findAll = async () => {
+interface FindAllFilters {
+  estado?: string;
+  id_usuario?: string;
+  id_mesa?: string;
+  fecha_reservacion?: string;
+}
+
+/**
+ * Lista reservaciones para administradores con filtros opcionales por estado, usuario, mesa y fecha.
+ */
+export const findAll = async (filters: FindAllFilters = {}) => {
+  const where: {
+    estado?: string;
+    id_usuario?: number;
+    id_mesa?: number;
+    fecha_reservacion?: Date;
+  } = {};
+
+  if (filters.estado !== undefined) {
+    if (!estadosValidos.includes(filters.estado as EstadoReservacion)) {
+      throw new AppError(400, 'Estado de reservacion invalido');
+    }
+
+    where.estado = filters.estado;
+  }
+
+  if (filters.id_usuario !== undefined) {
+    const idUsuario = Number(filters.id_usuario);
+    validateId(idUsuario, 'usuario');
+    where.id_usuario = idUsuario;
+  }
+
+  if (filters.id_mesa !== undefined) {
+    const idMesa = Number(filters.id_mesa);
+    validateId(idMesa, 'mesa');
+    where.id_mesa = idMesa;
+  }
+
+  if (filters.fecha_reservacion !== undefined) {
+    where.fecha_reservacion = toDateOnly(filters.fecha_reservacion);
+  }
+
   const reservaciones = await prisma.reservacion.findMany({
+    where,
     orderBy: [{ fecha_reservacion: 'desc' }, { hora_reservacion: 'desc' }]
   });
 
   return reservaciones.map(toReservacionResponse);
 };
 
+/**
+ * Cambia el estado de una reservacion usando solo estados permitidos por negocio.
+ */
 export const updateEstado = async (id: number, payload: UpdateEstadoReservacionDto) => {
+  validateId(id);
+
   if (!estadosValidos.includes(payload.estado)) {
     throw new AppError(400, 'Estado de reservacion invalido');
   }
@@ -153,7 +246,12 @@ export const updateEstado = async (id: number, payload: UpdateEstadoReservacionD
   }
 };
 
+/**
+ * Cancela una reservacion solo si pertenece al cliente autenticado.
+ */
 export const cancelMine = async (id: number, user: JwtPayload) => {
+  validateId(id);
+
   const result = await prisma.reservacion.updateMany({
     where: {
       id_reservacion: id,

@@ -2,9 +2,7 @@ import { AppError } from '../../middlewares/error.middleware.js';
 import { prisma } from '../../config/db.js';
 import { comparePassword, hashPassword } from '../../utils/bcrypt.js';
 import { signToken } from '../../utils/jwt.js';
-import { JwtPayload, LoginDto, RegisterDto, Role, Usuario, UsuarioPublico } from './auth.types.js';
-
-const rolesValidos: Role[] = ['admin', 'cliente'];
+import { JwtPayload, LoginDto, RegisterDto, Usuario, UsuarioPublico } from './auth.types.js';
 
 const toPublicUser = (usuario: Usuario): UsuarioPublico => ({
   id_usuario: usuario.id_usuario,
@@ -17,12 +15,16 @@ const toPublicUser = (usuario: Usuario): UsuarioPublico => ({
   fecha_actualizacion: usuario.fecha_actualizacion
 });
 
+/**
+ * Registra un usuario cliente desde el endpoint publico.
+ * El rol admin se bloquea aqui para evitar elevacion de privilegios desde registro abierto.
+ */
 export const register = async (payload: RegisterDto) => {
-  const rol = payload.rol ?? 'cliente';
-
-  if (!rolesValidos.includes(rol)) {
-    throw new AppError(400, 'Rol invalido');
+  if (payload.rol && payload.rol !== 'cliente') {
+    throw new AppError(403, 'No puedes registrar usuarios admin desde este endpoint');
   }
+
+  const rol = 'cliente';
 
   const passwordHash = await hashPassword(payload.password);
 
@@ -54,6 +56,9 @@ export const register = async (payload: RegisterDto) => {
   }
 };
 
+/**
+ * Autentica por correo y contrasena, valida el hash bcrypt almacenado y emite JWT.
+ */
 export const login = async (payload: LoginDto) => {
   const usuarioRecord = await prisma.usuario.findUnique({
     where: {
@@ -81,6 +86,9 @@ export const login = async (payload: LoginDto) => {
   return { usuario, token };
 };
 
+/**
+ * Devuelve el perfil publico del usuario autenticado sin exponer password_hash.
+ */
 export const getProfile = async (jwtPayload: JwtPayload) => {
   const usuario = await prisma.usuario.findFirst({
     where: {

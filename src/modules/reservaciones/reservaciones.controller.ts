@@ -22,7 +22,12 @@ export const findMine = async (req: Request, res: Response, next: NextFunction) 
 
 export const findAll = async (_req: Request, res: Response, next: NextFunction) => {
   try {
-    const reservaciones = await reservacionesService.findAll();
+    const reservaciones = await reservacionesService.findAll({
+      estado: _req.query.estado as string | undefined,
+      id_usuario: _req.query.id_usuario as string | undefined,
+      id_mesa: _req.query.id_mesa as string | undefined,
+      fecha_reservacion: _req.query.fecha_reservacion as string | undefined
+    });
     return successResponse(res, 200, 'Reservaciones obtenidas correctamente', reservaciones);
   } catch (error) {
     return next(error);
