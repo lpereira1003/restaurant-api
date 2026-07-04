@@ -9,7 +9,7 @@ export const authRouter = Router();
 /**
  * @swagger
  * tags:
- *   name: Auth
+ *   name: /api/auth
  *   description: Autenticacion, obtencion de JWT y consulta de perfil autenticado
  */
 
@@ -17,7 +17,7 @@ export const authRouter = Router();
  * @swagger
  * /api/auth/register:
  *   post:
- *     tags: [Auth]
+ *     tags: [/api/auth]
  *     summary: Registrar un usuario cliente
  *     description: |
  *       Crea un usuario con rol `cliente`. Este endpoint no permite crear administradores.
@@ -88,7 +88,7 @@ authRouter.post(
  * @swagger
  * /api/auth/login:
  *   post:
- *     tags: [Auth]
+ *     tags: [/api/auth]
  *     summary: Iniciar sesion y obtener JWT
  *     description: |
  *       Autentica usuarios `admin` o `cliente` y devuelve un JWT en `data.token`.
@@ -179,7 +179,7 @@ authRouter.post('/login', validateSchema({ body: loginSchema }), authController.
  * @swagger
  * /api/auth/perfil:
  *   get:
- *     tags: [Auth]
+ *     tags: [/api/auth]
  *     summary: Obtener perfil autenticado
  *     description: |
  *       Devuelve el perfil del usuario identificado por el JWT enviado en el header `Authorization`.

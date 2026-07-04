@@ -10,7 +10,7 @@ export const mesasRouter = Router();
 /**
  * @swagger
  * tags:
- *   name: Mesas
+ *   name: Mesas — /api/mesas
  *   description: Gestion de mesas
  */
 
@@ -18,7 +18,7 @@ export const mesasRouter = Router();
  * @swagger
  * /api/mesas:
  *   get:
- *     tags: [Mesas]
+ *     tags: [Mesas — /api/mesas]
  *     summary: Listar mesas activas
  *     responses:
  *       200:
@@ -30,7 +30,7 @@ mesasRouter.get('/', mesasController.findAll);
  * @swagger
  * /api/mesas/{id}:
  *   get:
- *     tags: [Mesas]
+ *     tags: [Mesas — /api/mesas]
  *     summary: Obtener mesa por id
  *     parameters:
  *       - in: path
@@ -49,7 +49,7 @@ mesasRouter.get('/:id', validateSchema({ params: mesaIdParamsSchema }), mesasCon
  * @swagger
  * /api/mesas:
  *   post:
- *     tags: [Mesas]
+ *     tags: [Mesas — /api/mesas]
  *     summary: Crear mesa
  *     security:
  *       - bearerAuth: []
@@ -85,7 +85,7 @@ mesasRouter.post(
  * @swagger
  * /api/mesas/{id}:
  *   put:
- *     tags: [Mesas]
+ *     tags: [Mesas — /api/mesas]
  *     summary: Actualizar mesa
  *     security:
  *       - bearerAuth: []
@@ -126,7 +126,7 @@ mesasRouter.put(
  * @swagger
  * /api/mesas/{id}:
  *   delete:
- *     tags: [Mesas]
+ *     tags: [Mesas — /api/mesas]
  *     summary: Eliminar mesa con soft delete
  *     security:
  *       - bearerAuth: []

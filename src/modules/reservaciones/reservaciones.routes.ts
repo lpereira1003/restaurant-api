@@ -15,7 +15,7 @@ export const reservacionesRouter = Router();
 /**
  * @swagger
  * tags:
- *   name: Reservaciones
+ *   name: /api/reservaciones
  *   description: Gestion de reservaciones
  */
 
@@ -23,7 +23,7 @@ export const reservacionesRouter = Router();
  * @swagger
  * /api/reservaciones:
  *   post:
- *     tags: [Reservaciones]
+ *     tags: [/api/reservaciones]
  *     summary: Crear reservacion como cliente
  *     security:
  *       - bearerAuth: []
@@ -62,7 +62,7 @@ reservacionesRouter.post(
  * @swagger
  * /api/reservaciones/mis:
  *   get:
- *     tags: [Reservaciones]
+ *     tags: [/api/reservaciones]
  *     summary: Listar mis reservaciones
  *     security:
  *       - bearerAuth: []
@@ -83,7 +83,7 @@ reservacionesRouter.get(
  * @swagger
  * /api/reservaciones:
  *   get:
- *     tags: [Reservaciones]
+ *     tags: [/api/reservaciones]
  *     summary: Listar todas las reservaciones como admin
  *     security:
  *       - bearerAuth: []
@@ -120,7 +120,7 @@ reservacionesRouter.get(
  * @swagger
  * /api/reservaciones/{id}/estado:
  *   put:
- *     tags: [Reservaciones]
+ *     tags: [/api/reservaciones]
  *     summary: Cambiar estado de reservacion como admin
  *     security:
  *       - bearerAuth: []
@@ -163,7 +163,7 @@ reservacionesRouter.put(
  * @swagger
  * /api/reservaciones/{id}:
  *   delete:
- *     tags: [Reservaciones]
+ *     tags: [/api/reservaciones]
  *     summary: Cancelar reservacion propia como cliente
  *     security:
  *       - bearerAuth: []

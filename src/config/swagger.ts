@@ -8,6 +8,24 @@ export const swaggerSpec = swaggerJSDoc({
       version: '1.0.0',
       description: 'API REST para autenticacion, mesas y reservaciones de restaurante.'
     },
+    tags: [
+      {
+        name: '/api/auth',
+        description: 'Autenticacion, obtencion de JWT y consulta de perfil autenticado'
+      },
+      {
+        name: 'Mesas — /api/mesas',
+        description: 'Gestion de mesas'
+      },
+      {
+        name: '/api/reservaciones',
+        description: 'Gestion de reservaciones'
+      },
+      {
+        name: 'Health',
+        description: 'Verificacion del estado de la API'
+      }
+    ],
     servers: [
       {
         url: '/',
