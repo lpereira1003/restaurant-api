@@ -21,13 +21,11 @@ DATABASE_URL="postgresql://usuario:password@host:5432/restaurant_reservations_db
 JWT_SECRET="generar_una_clave_segura_unica"
 JWT_EXPIRES_IN="1d"
 BCRYPT_SALT_ROUNDS=12
-CORS_ORIGIN=https://tu-dominio.com
 ```
 
 Notas:
 
 - `JWT_SECRET` debe ser distinto al valor local y no debe subirse al repositorio.
-- `CORS_ORIGIN` puede ser una lista separada por comas si hay mas de un frontend.
 - Si el proveedor ya inyecta `PORT`, usar la variable que entrega el entorno.
 
 ## Base de datos

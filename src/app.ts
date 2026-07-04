@@ -1,4 +1,3 @@
-import cors from 'cors';
 import express from 'express';
 import helmet from 'helmet';
 import morgan from 'morgan';
@@ -14,11 +13,6 @@ import { successResponse } from './utils/responses.js';
 export const app = express();
 
 app.use(helmet());
-app.use(
-  cors({
-    origin: env.cors.origin === '*' ? '*' : env.cors.origin.split(',').map((origin) => origin.trim())
-  })
-);
 app.use(morgan(env.nodeEnv === 'production' ? 'combined' : 'dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));

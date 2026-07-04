@@ -11,7 +11,7 @@ API REST en Node.js, TypeScript y Express para autenticacion, mesas y reservacio
 - bcrypt
 - Zod
 - Swagger UI
-- dotenv, cors, helmet, morgan
+- dotenv, helmet, morgan
 - pnpm
 - ESLint y Prettier
 
@@ -53,7 +53,6 @@ DATABASE_URL="postgresql://usuario:password@localhost:5432/restaurant_reservatio
 JWT_SECRET="cambiar_por_una_clave_segura"
 JWT_EXPIRES_IN="1d"
 BCRYPT_SALT_ROUNDS=12
-CORS_ORIGIN=*
 ```
 
 Variables principales:
@@ -62,7 +61,6 @@ Variables principales:
 - `JWT_SECRET`: secreto para firmar y verificar JWT. En produccion debe cambiarse.
 - `JWT_EXPIRES_IN`: tiempo de expiracion del token.
 - `BCRYPT_SALT_ROUNDS`: factor de costo bcrypt. El proyecto fuerza minimo `12`.
-- `CORS_ORIGIN`: origen permitido para CORS. Usa `*` en desarrollo o una lista separada por comas.
 
 Para produccion, usar `.env.production.example` como referencia y configurar los valores en el panel del proveedor. La guia paso a paso esta en [docs/deployment.md](docs/deployment.md). Para publicar el repositorio, ver [docs/github-publication.md](docs/github-publication.md).
 

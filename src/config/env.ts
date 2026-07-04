@@ -20,8 +20,5 @@ export const env = {
   },
   bcrypt: {
     saltRounds: Math.max(12, Number(process.env.BCRYPT_SALT_ROUNDS ?? 12))
-  },
-  cors: {
-    origin: process.env.CORS_ORIGIN ?? '*'
   }
 };
