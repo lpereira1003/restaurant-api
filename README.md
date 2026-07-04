@@ -64,7 +64,7 @@ Variables principales:
 - `BCRYPT_SALT_ROUNDS`: factor de costo bcrypt. El proyecto fuerza minimo `12`.
 - `CORS_ORIGIN`: origen permitido para CORS. Usa `*` en desarrollo o una lista separada por comas.
 
-Para produccion, usar `.env.production.example` como referencia y configurar los valores en el panel del proveedor. La guia paso a paso esta en [docs/deployment.md](docs/deployment.md).
+Para produccion, usar `.env.production.example` como referencia y configurar los valores en el panel del proveedor. La guia paso a paso esta en [docs/deployment.md](docs/deployment.md). Para publicar el repositorio, ver [docs/github-publication.md](docs/github-publication.md).
 
 ## Credenciales de prueba
 
