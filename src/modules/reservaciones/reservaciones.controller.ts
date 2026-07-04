@@ -2,6 +2,9 @@ import { NextFunction, Request, Response } from 'express';
 import { successResponse } from '../../utils/responses.js';
 import * as reservacionesService from './reservaciones.service.js';
 
+/**
+ * Crea una reservacion asociada al cliente autenticado.
+ */
 export const create = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const reservacion = await reservacionesService.create(req.user!, req.body);
@@ -11,6 +14,9 @@ export const create = async (req: Request, res: Response, next: NextFunction) =>
   }
 };
 
+/**
+ * Lista reservaciones pertenecientes al cliente autenticado.
+ */
 export const findMine = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const reservaciones = await reservacionesService.findMine(req.user!);
@@ -20,6 +26,9 @@ export const findMine = async (req: Request, res: Response, next: NextFunction) 
   }
 };
 
+/**
+ * Lista reservaciones para administradores aplicando filtros opcionales de query.
+ */
 export const findAll = async (_req: Request, res: Response, next: NextFunction) => {
   try {
     const reservaciones = await reservacionesService.findAll({
@@ -34,6 +43,9 @@ export const findAll = async (_req: Request, res: Response, next: NextFunction) 
   }
 };
 
+/**
+ * Cambia el estado de una reservacion desde una peticion de administrador.
+ */
 export const updateEstado = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const reservacion = await reservacionesService.updateEstado(Number(req.params.id), req.body);
@@ -43,6 +55,9 @@ export const updateEstado = async (req: Request, res: Response, next: NextFuncti
   }
 };
 
+/**
+ * Cancela una reservacion propia del cliente autenticado.
+ */
 export const cancelMine = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const reservacion = await reservacionesService.cancelMine(Number(req.params.id), req.user!);

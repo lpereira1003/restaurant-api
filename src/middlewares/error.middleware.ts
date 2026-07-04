@@ -1,6 +1,9 @@
 import { NextFunction, Request, Response } from 'express';
 import { errorResponse } from '../utils/responses.js';
 
+/**
+ * Error operacional con codigo HTTP controlado para respuestas de API.
+ */
 export class AppError extends Error {
   constructor(
     public statusCode: number,
@@ -10,10 +13,16 @@ export class AppError extends Error {
   }
 }
 
+/**
+ * Convierte rutas inexistentes en un AppError 404 manejado por errorHandler.
+ */
 export const notFoundHandler = (req: Request, _res: Response, next: NextFunction) => {
   next(new AppError(404, `Ruta no encontrada: ${req.method} ${req.originalUrl}`));
 };
 
+/**
+ * Centraliza respuestas de error y oculta detalles internos en errores 500.
+ */
 export const errorHandler = (
   err: Error | AppError,
   _req: Request,

@@ -10,6 +10,9 @@ for (const key of requiredEnv) {
   }
 }
 
+/**
+ * Configuracion tipada de entorno usada por la API.
+ */
 export const env = {
   nodeEnv: process.env.NODE_ENV ?? 'development',
   port: Number(process.env.PORT ?? 3000),

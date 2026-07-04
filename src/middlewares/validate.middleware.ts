@@ -11,6 +11,9 @@ type RequestSchemas = {
   query?: ZodType;
 };
 
+/**
+ * Ejecuta validadores manuales legacy y responde 400 si hay errores acumulados.
+ */
 export const validate = (validator: Validator) => {
   return (req: Request, res: Response, next: NextFunction) => {
     const errors = validator(req);
@@ -57,6 +60,9 @@ export const validateSchema = (schemas: RequestSchemas) => {
   };
 };
 
+/**
+ * Construye un validador simple de campos obligatorios para req.body.
+ */
 export const requireBodyFields =
   (...fields: string[]): Validator =>
   (req) => {

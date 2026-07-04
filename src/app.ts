@@ -11,6 +11,9 @@ import { errorHandler, notFoundHandler } from './middlewares/error.middleware.js
 import { successResponse } from './utils/responses.js';
 import { renderLandingPage } from './views/landing.js';
 
+/**
+ * Aplicacion Express principal con middlewares, landing, Swagger y modulos de API.
+ */
 export const app = express();
 
 app.use(

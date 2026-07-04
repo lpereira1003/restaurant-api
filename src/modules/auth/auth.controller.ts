@@ -2,6 +2,9 @@ import { NextFunction, Request, Response } from 'express';
 import { successResponse } from '../../utils/responses.js';
 import * as authService from './auth.service.js';
 
+/**
+ * Controla el registro publico de clientes y devuelve usuario publico con JWT.
+ */
 export const register = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const result = await authService.register(req.body);
@@ -11,6 +14,9 @@ export const register = async (req: Request, res: Response, next: NextFunction) 
   }
 };
 
+/**
+ * Controla el inicio de sesion para usuarios activos y devuelve JWT.
+ */
 export const login = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const result = await authService.login(req.body);
@@ -20,6 +26,9 @@ export const login = async (req: Request, res: Response, next: NextFunction) => 
   }
 };
 
+/**
+ * Devuelve el perfil del usuario autenticado a partir del payload JWT.
+ */
 export const profile = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const result = await authService.getProfile(req.user!);

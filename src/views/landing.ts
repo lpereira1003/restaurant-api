@@ -1,3 +1,6 @@
+/**
+ * Renderiza la Landing Page publica con accesos a Health Check y Swagger.
+ */
 export const renderLandingPage = () => {
   const year = new Date().getFullYear();
 
