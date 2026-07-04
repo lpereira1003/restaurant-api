@@ -17,9 +17,9 @@ Configurar estas variables en el panel del proveedor:
 ```env
 NODE_ENV=production
 PORT=3000
-DATABASE_URL="postgresql://USER:PASSWORD@HOST:5432/restaurant_reservations_db?schema=public&sslmode=require"
-JWT_SECRET=generar-un-secreto-largo-y-unico
-JWT_EXPIRES_IN=1d
+DATABASE_URL="postgresql://usuario:password@host:5432/restaurant_reservations_db?schema=public&sslmode=require"
+JWT_SECRET="generar_una_clave_segura_unica"
+JWT_EXPIRES_IN="1d"
 BCRYPT_SALT_ROUNDS=12
 CORS_ORIGIN=https://tu-dominio.com
 ```

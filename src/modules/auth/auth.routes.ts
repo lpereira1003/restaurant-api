@@ -70,7 +70,7 @@ export const authRouter = Router();
  *                   activo: true
  *                   fecha_creacion: "2026-07-03T16:09:42.753-06:00"
  *                   fecha_actualizacion: "2026-07-03T16:09:42.753-06:00"
- *                 token: "eyJhbGciOiJIUzI1NiIsInR5cCI6..."
+ *                 token: "jwt.demo.token"
  *       400:
  *         description: Datos invalidos
  *       403:
@@ -153,7 +153,7 @@ authRouter.post(
  *                       activo: true
  *                       fecha_creacion: "2026-07-03T16:09:42.753-06:00"
  *                       fecha_actualizacion: "2026-07-03T16:09:42.753-06:00"
- *                     token: "eyJhbGciOiJIUzI1NiIsInR5cCI6..."
+ *                     token: "jwt.demo.token"
  *               cliente:
  *                 summary: Respuesta login cliente
  *                 value:
@@ -169,7 +169,7 @@ authRouter.post(
  *                       activo: true
  *                       fecha_creacion: "2026-07-03T16:09:42.753-06:00"
  *                       fecha_actualizacion: "2026-07-03T16:09:42.753-06:00"
- *                     token: "eyJhbGciOiJIUzI1NiIsInR5cCI6..."
+ *                     token: "jwt.demo.token"
  *       401:
  *         description: Credenciales invalidas
  */

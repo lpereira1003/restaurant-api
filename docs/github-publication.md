@@ -17,7 +17,7 @@ Confirmar que no se publiquen secretos:
 
 ```bash
 git status --short
-git diff -- .env .env.example .env.production.example
+git diff -- .env.example .env.production.example
 ```
 
 El archivo `.env` debe permanecer ignorado por Git.

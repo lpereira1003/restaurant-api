@@ -48,10 +48,10 @@ El archivo `.env.example` contiene las variables necesarias para ejecutar el pro
 NODE_ENV=development
 PORT=3000
 
-DATABASE_URL="postgresql://postgres:root@localhost:5432/restaurant_reservations_db?schema=public"
+DATABASE_URL="postgresql://usuario:password@localhost:5432/restaurant_reservations_db?schema=public"
 
-JWT_SECRET=cambia-este-secreto-en-produccion
-JWT_EXPIRES_IN=1d
+JWT_SECRET="cambiar_por_una_clave_segura"
+JWT_EXPIRES_IN="1d"
 BCRYPT_SALT_ROUNDS=12
 CORS_ORIGIN=*
 ```
