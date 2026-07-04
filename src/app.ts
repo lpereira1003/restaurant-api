@@ -9,13 +9,19 @@ import { mesasRouter } from './modules/mesas/mesas.routes.js';
 import { reservacionesRouter } from './modules/reservaciones/reservaciones.routes.js';
 import { errorHandler, notFoundHandler } from './middlewares/error.middleware.js';
 import { successResponse } from './utils/responses.js';
+import { renderLandingPage } from './views/landing.js';
 
 export const app = express();
 
 app.use(helmet());
 app.use(morgan(env.nodeEnv === 'production' ? 'combined' : 'dev'));
+app.use('/assets', express.static('public'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
+app.get('/', (_req, res) => {
+  return res.type('html').send(renderLandingPage());
+});
 
 /**
  * @swagger
