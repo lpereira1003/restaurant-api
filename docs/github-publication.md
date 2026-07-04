@@ -33,7 +33,7 @@ api-restaurant-reservations
 Luego conectar el remoto local:
 
 ```bash
-git remote add origin https://github.com/<usuario>/api-restaurant-reservations.git
+git remote add origin URL_DEL_REPOSITORIO
 git branch -M main
 git push -u origin main
 ```

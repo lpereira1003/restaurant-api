@@ -1,13 +1,14 @@
 import { app } from './app.js';
 import { checkDatabaseConnection } from './config/db.js';
-import { env } from './config/env.js';
+
+const PORT = Number(process.env.PORT || 3000);
 
 const startServer = async () => {
   await checkDatabaseConnection();
 
-  app.listen(env.port, () => {
-    console.log(`Server running on http://localhost:${env.port}`);
-    console.log(`Swagger docs on http://localhost:${env.port}/api-docs`);
+  app.listen(PORT, '0.0.0.0', () => {
+    console.log(`Servidor ejecutándose en http://0.0.0.0:${PORT}`);
+    console.log(`Swagger disponible en /api-docs`);
   });
 };
 

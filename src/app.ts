@@ -13,7 +13,11 @@ import { renderLandingPage } from './views/landing.js';
 
 export const app = express();
 
-app.use(helmet());
+app.use(
+  helmet({
+    hsts: false
+  })
+);
 app.use(morgan(env.nodeEnv === 'production' ? 'combined' : 'dev'));
 app.use('/assets', express.static('public'));
 app.use(express.json());
