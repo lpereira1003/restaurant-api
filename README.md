@@ -188,6 +188,13 @@ Swagger:
 GET /api-docs
 ```
 
+Autorizacion en Swagger UI:
+
+- En el boton `Authorize`, pegar solo el JWT, sin escribir `Bearer`.
+- Swagger concatena automaticamente el prefijo `Bearer`.
+- Si escribes `Bearer` manualmente en Swagger, el header puede quedar duplicado: `Authorization: Bearer Bearer ey...`.
+- En Postman o clientes HTTP manuales si debes enviar el header completo: `Authorization: Bearer <token>`.
+
 Coleccion Postman:
 
 ```text
@@ -228,6 +235,9 @@ Reservaciones:
 
 ## Roadmap
 
+- Verificado en Postman y Swagger: `GET /api/reservaciones` como `admin` con `Authorization: Bearer <token_admin>` y `Content-Type: application/json`.
+- Verificado en Postman y Swagger: `POST /api/auth/register` registra usuarios `cliente` correctamente.
+- Verificado en Postman y Swagger: `POST /api/auth/login` obtiene JWT para usuarios `cliente` correctamente.
 - Desplegar API en produccion con base de datos remota, variables de entorno configuradas, `/api-docs` accesible publicamente y endpoints verificados en la URL de produccion.
 - Publicar el repositorio en GitHub como repositorio publico.
 - Completar historial de commits progresivo hasta al menos 8 commits significativos.
