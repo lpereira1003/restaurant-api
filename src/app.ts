@@ -15,6 +15,11 @@ export const app = express();
 
 app.use(
   helmet({
+    contentSecurityPolicy: {
+      directives: {
+        'upgrade-insecure-requests': null
+      }
+    },
     hsts: false
   })
 );
