@@ -9,8 +9,8 @@ CREATE TABLE IF NOT EXISTS usuarios (
   password_hash TEXT NOT NULL,
   rol VARCHAR(20) NOT NULL CHECK (rol IN ('admin', 'cliente')),
   activo BOOLEAN NOT NULL DEFAULT true,
-  fecha_creacion TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  fecha_actualizacion TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+  fecha_creacion TIMESTAMP NOT NULL DEFAULT (CURRENT_TIMESTAMP - INTERVAL '6 hours'),
+  fecha_actualizacion TIMESTAMP NOT NULL DEFAULT (CURRENT_TIMESTAMP - INTERVAL '6 hours')
 );
 
 CREATE TABLE IF NOT EXISTS mesas (
@@ -20,8 +20,8 @@ CREATE TABLE IF NOT EXISTS mesas (
   ubicacion VARCHAR(100),
   descripcion TEXT,
   activa BOOLEAN NOT NULL DEFAULT true,
-  fecha_creacion TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  fecha_actualizacion TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+  fecha_creacion TIMESTAMP NOT NULL DEFAULT (CURRENT_TIMESTAMP - INTERVAL '6 hours'),
+  fecha_actualizacion TIMESTAMP NOT NULL DEFAULT (CURRENT_TIMESTAMP - INTERVAL '6 hours')
 );
 
 CREATE TABLE IF NOT EXISTS reservaciones (
@@ -34,7 +34,7 @@ CREATE TABLE IF NOT EXISTS reservaciones (
   estado VARCHAR(20) NOT NULL DEFAULT 'pendiente'
     CHECK (estado IN ('pendiente', 'confirmada', 'cancelada', 'completada', 'rechazada')),
   observaciones TEXT,
-  fecha_creacion TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  fecha_actualizacion TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  fecha_creacion TIMESTAMP NOT NULL DEFAULT (CURRENT_TIMESTAMP - INTERVAL '6 hours'),
+  fecha_actualizacion TIMESTAMP NOT NULL DEFAULT (CURRENT_TIMESTAMP - INTERVAL '6 hours'),
   CONSTRAINT uq_mesa_fecha_hora UNIQUE (id_mesa, fecha_reservacion, hora_reservacion)
 );

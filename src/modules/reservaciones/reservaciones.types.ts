@@ -9,8 +9,8 @@ export interface Reservacion {
   cantidad_personas: number;
   estado: EstadoReservacion;
   observaciones?: string;
-  fecha_creacion?: Date;
-  fecha_actualizacion?: Date;
+  fecha_creacion?: string;
+  fecha_actualizacion?: string;
 }
 
 export interface CreateReservacionDto {

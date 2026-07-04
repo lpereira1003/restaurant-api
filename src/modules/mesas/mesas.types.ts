@@ -5,8 +5,8 @@ export interface Mesa {
   ubicacion?: string;
   descripcion?: string;
   activa: boolean;
-  fecha_creacion?: Date;
-  fecha_actualizacion?: Date;
+  fecha_creacion?: string;
+  fecha_actualizacion?: string;
 }
 
 export interface CreateMesaDto {

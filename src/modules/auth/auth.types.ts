@@ -38,8 +38,8 @@ export interface UsuarioPublico {
   correo: string;
   rol: Role;
   activo: boolean;
-  fecha_creacion?: Date;
-  fecha_actualizacion?: Date;
+  fecha_creacion?: string;
+  fecha_actualizacion?: string;
 }
 
 declare global {

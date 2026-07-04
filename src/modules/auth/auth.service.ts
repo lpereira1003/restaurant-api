@@ -2,6 +2,7 @@ import { AppError } from '../../middlewares/error.middleware.js';
 import { prisma } from '../../config/db.js';
 import { comparePassword, hashPassword } from '../../utils/bcrypt.js';
 import { signToken } from '../../utils/jwt.js';
+import { formatUtcMinus6Timestamp, nowUtcMinus6 } from '../../utils/time.js';
 import { JwtPayload, LoginDto, RegisterDto, Usuario, UsuarioPublico } from './auth.types.js';
 
 const toPublicUser = (usuario: Usuario): UsuarioPublico => ({
@@ -11,8 +12,8 @@ const toPublicUser = (usuario: Usuario): UsuarioPublico => ({
   correo: usuario.correo,
   rol: usuario.rol,
   activo: usuario.activo,
-  fecha_creacion: usuario.fecha_creacion,
-  fecha_actualizacion: usuario.fecha_actualizacion
+  fecha_creacion: formatUtcMinus6Timestamp(usuario.fecha_creacion),
+  fecha_actualizacion: formatUtcMinus6Timestamp(usuario.fecha_actualizacion)
 });
 
 /**
@@ -27,6 +28,7 @@ export const register = async (payload: RegisterDto) => {
   const rol = 'cliente';
 
   const passwordHash = await hashPassword(payload.password);
+  const fechaActual = nowUtcMinus6();
 
   try {
     const usuarioRecord = await prisma.usuario.create({
@@ -35,7 +37,9 @@ export const register = async (payload: RegisterDto) => {
         apellido: payload.apellido,
         correo: payload.correo,
         password_hash: passwordHash,
-        rol
+        rol,
+        fecha_creacion: fechaActual,
+        fecha_actualizacion: fechaActual
       }
     });
 
@@ -111,5 +115,5 @@ export const getProfile = async (jwtPayload: JwtPayload) => {
     throw new AppError(404, 'Usuario no encontrado');
   }
 
-  return usuario;
+  return toPublicUser(usuario as Usuario);
 };

@@ -14,8 +14,8 @@ model Usuario {
   password_hash       String
   rol                 String        @db.VarChar(20)
   activo              Boolean       @default(true)
-  fecha_creacion      DateTime      @default(now()) @db.Timestamp(6)
-  fecha_actualizacion DateTime      @default(now()) @db.Timestamp(6)
+  fecha_creacion      DateTime      @default(dbgenerated("(CURRENT_TIMESTAMP - INTERVAL '6 hours')")) @db.Timestamp(6)
+  fecha_actualizacion DateTime      @default(dbgenerated("(CURRENT_TIMESTAMP - INTERVAL '6 hours')")) @db.Timestamp(6)
   reservaciones       Reservacion[]
 
   @@map("usuarios")
@@ -28,8 +28,8 @@ model Mesa {
   ubicacion           String?       @db.VarChar(100)
   descripcion         String?
   activa              Boolean       @default(true)
-  fecha_creacion      DateTime      @default(now()) @db.Timestamp(6)
-  fecha_actualizacion DateTime      @default(now()) @db.Timestamp(6)
+  fecha_creacion      DateTime      @default(dbgenerated("(CURRENT_TIMESTAMP - INTERVAL '6 hours')")) @db.Timestamp(6)
+  fecha_actualizacion DateTime      @default(dbgenerated("(CURRENT_TIMESTAMP - INTERVAL '6 hours')")) @db.Timestamp(6)
   reservaciones       Reservacion[]
 
   @@map("mesas")
@@ -44,8 +44,8 @@ model Reservacion {
   cantidad_personas   Int
   estado              String   @default("pendiente") @db.VarChar(20)
   observaciones       String?
-  fecha_creacion      DateTime @default(now()) @db.Timestamp(6)
-  fecha_actualizacion DateTime @default(now()) @db.Timestamp(6)
+  fecha_creacion      DateTime @default(dbgenerated("(CURRENT_TIMESTAMP - INTERVAL '6 hours')")) @db.Timestamp(6)
+  fecha_actualizacion DateTime @default(dbgenerated("(CURRENT_TIMESTAMP - INTERVAL '6 hours')")) @db.Timestamp(6)
   mesa                Mesa     @relation(fields: [id_mesa], references: [id_mesa], onDelete: NoAction, onUpdate: NoAction, map: "fk_reservaciones_mesas")
   usuario             Usuario  @relation(fields: [id_usuario], references: [id_usuario], onDelete: NoAction, onUpdate: NoAction, map: "fk_reservaciones_usuarios")
 

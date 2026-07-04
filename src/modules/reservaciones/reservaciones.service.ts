@@ -1,5 +1,6 @@
 import { AppError } from '../../middlewares/error.middleware.js';
 import { prisma } from '../../config/db.js';
+import { formatUtcMinus6Timestamp, nowUtcMinus6 } from '../../utils/time.js';
 import { JwtPayload } from '../auth/auth.types.js';
 import {
   CreateReservacionDto,
@@ -76,7 +77,9 @@ const toReservacionResponse = (reservacion: {
   fecha_reservacion: formatDateOnly(reservacion.fecha_reservacion),
   hora_reservacion: formatTimeOnly(reservacion.hora_reservacion),
   estado: reservacion.estado as EstadoReservacion,
-  observaciones: reservacion.observaciones ?? undefined
+  observaciones: reservacion.observaciones ?? undefined,
+  fecha_creacion: formatUtcMinus6Timestamp(reservacion.fecha_creacion),
+  fecha_actualizacion: formatUtcMinus6Timestamp(reservacion.fecha_actualizacion)
 });
 
 /**
@@ -110,6 +113,7 @@ export const create = async (user: JwtPayload, payload: CreateReservacionDto) =>
 
   const fechaReservacion = toDateOnly(payload.fecha_reservacion);
   const horaReservacion = toTimeOnly(payload.hora_reservacion);
+  const fechaActual = nowUtcMinus6();
 
   const reservacionExistente = await prisma.reservacion.findFirst({
     where: {
@@ -137,7 +141,9 @@ export const create = async (user: JwtPayload, payload: CreateReservacionDto) =>
         fecha_reservacion: fechaReservacion,
         hora_reservacion: horaReservacion,
         cantidad_personas: payload.cantidad_personas,
-        observaciones: payload.observaciones ?? null
+        observaciones: payload.observaciones ?? null,
+        fecha_creacion: fechaActual,
+        fecha_actualizacion: fechaActual
       }
     });
 
@@ -232,7 +238,7 @@ export const updateEstado = async (id: number, payload: UpdateEstadoReservacionD
       },
       data: {
         estado: payload.estado,
-        fecha_actualizacion: new Date()
+        fecha_actualizacion: nowUtcMinus6()
       }
     });
 
@@ -259,7 +265,7 @@ export const cancelMine = async (id: number, user: JwtPayload) => {
     },
     data: {
       estado: 'cancelada',
-      fecha_actualizacion: new Date()
+      fecha_actualizacion: nowUtcMinus6()
     }
   });
 

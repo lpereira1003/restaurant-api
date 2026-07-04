@@ -1,6 +1,7 @@
 import { AppError } from '../../middlewares/error.middleware.js';
 import { prisma } from '../../config/db.js';
-import { CreateMesaDto, UpdateMesaDto } from './mesas.types.js';
+import { formatUtcMinus6Timestamp, nowUtcMinus6 } from '../../utils/time.js';
+import { CreateMesaDto, Mesa, UpdateMesaDto } from './mesas.types.js';
 
 const validateId = (id: number) => {
   if (!Number.isInteger(id) || id <= 0) {
@@ -33,11 +34,28 @@ const handleMesaError = (error: unknown): never => {
   throw error;
 };
 
+const toMesaResponse = (mesa: {
+  id_mesa: number;
+  numero_mesa: number;
+  capacidad: number;
+  ubicacion: string | null;
+  descripcion: string | null;
+  activa: boolean;
+  fecha_creacion: Date;
+  fecha_actualizacion: Date;
+}): Mesa => ({
+  ...mesa,
+  ubicacion: mesa.ubicacion ?? undefined,
+  descripcion: mesa.descripcion ?? undefined,
+  fecha_creacion: formatUtcMinus6Timestamp(mesa.fecha_creacion),
+  fecha_actualizacion: formatUtcMinus6Timestamp(mesa.fecha_actualizacion)
+});
+
 /**
  * Lista solo mesas activas. Las mesas desactivadas por soft delete no se exponen al publico.
  */
 export const findAll = async () => {
-  return prisma.mesa.findMany({
+  const mesas = await prisma.mesa.findMany({
     where: {
       activa: true
     },
@@ -45,6 +63,8 @@ export const findAll = async () => {
       numero_mesa: 'asc'
     }
   });
+
+  return mesas.map(toMesaResponse);
 };
 
 /**
@@ -64,7 +84,7 @@ export const findById = async (id: number) => {
     throw new AppError(404, 'Mesa no encontrada');
   }
 
-  return mesa;
+  return toMesaResponse(mesa);
 };
 
 /**
@@ -72,16 +92,21 @@ export const findById = async (id: number) => {
  */
 export const create = async (payload: CreateMesaDto) => {
   validateMesaData(payload);
+  const fechaActual = nowUtcMinus6();
 
   try {
-    return await prisma.mesa.create({
+    const mesa = await prisma.mesa.create({
       data: {
         numero_mesa: payload.numero_mesa,
         capacidad: payload.capacidad,
         ubicacion: payload.ubicacion ?? null,
-        descripcion: payload.descripcion ?? null
+        descripcion: payload.descripcion ?? null,
+        fecha_creacion: fechaActual,
+        fecha_actualizacion: fechaActual
       }
     });
+
+    return toMesaResponse(mesa);
   } catch (error) {
     handleMesaError(error);
   }
@@ -107,15 +132,17 @@ export const update = async (id: number, payload: UpdateMesaDto) => {
   }
 
   try {
-    return await prisma.mesa.update({
+    const mesa = await prisma.mesa.update({
       where: {
         id_mesa: id
       },
       data: {
         ...data,
-        fecha_actualizacion: new Date()
+        fecha_actualizacion: nowUtcMinus6()
       }
     });
+
+    return toMesaResponse(mesa);
   } catch (error) {
     handleMesaError(error);
   }
@@ -134,7 +161,7 @@ export const softDelete = async (id: number) => {
       },
       data: {
         activa: false,
-        fecha_actualizacion: new Date()
+        fecha_actualizacion: nowUtcMinus6()
       },
       select: {
         id_mesa: true
