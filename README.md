@@ -2,6 +2,20 @@
 
 API REST en Node.js, TypeScript y Express para autenticacion, mesas y reservaciones de restaurante. Usa PostgreSQL con Prisma Client, JWT y bcrypt.
 
+## URL publica
+
+Aplicacion desplegada en DigitalOcean:
+
+```text
+http://138.68.11.235:3000
+```
+
+Accesos principales:
+
+- Landing Page: `http://138.68.11.235:3000/`
+- Health Check: `http://138.68.11.235:3000/api/health`
+- Swagger API: `http://138.68.11.235:3000/api-docs/`
+
 ## Stack
 
 - Node.js + TypeScript
@@ -149,6 +163,14 @@ Produccion:
 pnpm start
 ```
 
+En servidor con PM2:
+
+```bash
+pm2 start dist/server.js --name restaurant-api --time
+pm2 save
+pm2 status restaurant-api
+```
+
 Calidad:
 
 ```bash
@@ -168,13 +190,25 @@ pnpm build
 Archivos excluidos por `.gitignore`:
 
 - `.env`
+- `.env.local`
+- `.env.*.local`
 - `.idea`
+- `.vscode`
 - `node_modules`
 - `dist`
-- `server.log`
-- logs y archivos generados por npm
+- `coverage`
+- `logs`
+- `*.log`
+- `.DS_Store`
+- logs y archivos generados
 
 ## Endpoints principales
+
+Landing Page:
+
+```text
+GET /
+```
 
 Health check:
 
@@ -223,6 +257,52 @@ Reservaciones:
 - `PUT /api/reservaciones/:id/estado` solo `admin`
 - `DELETE /api/reservaciones/:id` solo `cliente`, cancela solo reservaciones propias
 
+## Despliegue en DigitalOcean
+
+Servidor Ubuntu 22.04:
+
+- Node.js `22.x`
+- pnpm `11.1.1`
+- PostgreSQL `14`
+- PM2 para mantener la API activa
+- Puerto publico: `3000`
+- Proceso PM2: `restaurant-api`
+
+La API escucha en todas las interfaces de red:
+
+```text
+0.0.0.0:3000
+```
+
+Variables de entorno requeridas en el servidor:
+
+```env
+PORT=3000
+NODE_ENV=development
+DATABASE_URL="postgresql://usuario:password@localhost:5432/restaurant_reservations_db?schema=public"
+JWT_SECRET="clave_segura"
+JWT_EXPIRES_IN="1d"
+BCRYPT_SALT_ROUNDS=12
+```
+
+Comandos usados para preparar el proyecto en el servidor:
+
+```bash
+pnpm install --frozen-lockfile
+pnpm exec prisma generate
+pnpm build
+pm2 start dist/server.js --name restaurant-api --time
+pm2 save
+pm2 startup
+```
+
+Importante:
+
+- No ejecutar `prisma migrate reset` en el servidor.
+- No ejecutar `prisma db push` sobre una base restaurada con datos.
+- Para este despliegue inicial no se uso Docker, Nginx ni HTTPS.
+- Para produccion final se recomienda dominio, Nginx como reverse proxy y HTTPS con Let's Encrypt.
+
 ## Reglas de negocio implementadas
 
 - No se reservan mesas inactivas.
@@ -238,9 +318,9 @@ Reservaciones:
 - Verificado en Postman y Swagger: `GET /api/reservaciones` como `admin` con `Authorization: Bearer <token_admin>` y `Content-Type: application/json`.
 - Verificado en Postman y Swagger: `POST /api/auth/register` registra usuarios `cliente` correctamente.
 - Verificado en Postman y Swagger: `POST /api/auth/login` obtiene JWT para usuarios `cliente` correctamente.
-- Desplegar API en produccion con base de datos remota, variables de entorno configuradas, `/api-docs` accesible publicamente y endpoints verificados en la URL de produccion.
-- Publicar el repositorio en GitHub como repositorio publico.
-- Completar historial de commits progresivo hasta al menos 8 commits significativos.
+- Desplegado en DigitalOcean por IP publica con `/`, `/api/health` y `/api-docs/` verificados.
+- Publicado en GitHub como repositorio publico.
+- Historial de commits progresivo completado.
 
 ## Estructura del proyecto
 
@@ -250,6 +330,8 @@ database/
   seed.sql
 
 src/
+  views/
+    landing.ts
   config/
     env.ts
     db.ts
@@ -281,4 +363,8 @@ src/
     responses.ts
   app.ts
   server.ts
+
+public/
+  css/
+    landing.css
 ```
