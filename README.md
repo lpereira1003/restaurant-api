@@ -29,12 +29,25 @@ Accesos principales:
 - pnpm
 - ESLint y Prettier
 
+## Arquitectura
+
+El proyecto sigue una arquitectura modular por dominio:
+
+- `src/app.ts`: configura middlewares, landing page, Swagger y rutas principales.
+- `src/server.ts`: arranca el servidor en `0.0.0.0` para despliegue por IP publica.
+- `src/config`: centraliza variables de entorno, conexion Prisma/PostgreSQL y configuracion Swagger.
+- `src/middlewares`: autenticacion JWT, autorizacion por rol, validacion Zod y manejo de errores.
+- `src/modules`: contiene los modulos de `auth`, `mesas` y `reservaciones`, separados en rutas, controladores, servicios, schemas y tipos.
+- `src/utils`: utilidades de JWT, bcrypt, respuestas HTTP y formato de fechas.
+- `public`: assets estaticos de la Landing Page.
+- `database`: scripts SQL de referencia para schema y seed.
+
 ## Instalacion
 
 Requisitos:
 
-- Node.js compatible con el proyecto.
-- pnpm.
+- Node.js `22.x` recomendado.
+- pnpm `11.1.1`.
 - PostgreSQL en ejecucion.
 - Base de datos `restaurant_reservations_db` creada.
 
@@ -222,12 +235,32 @@ Swagger:
 GET /api-docs
 ```
 
+La documentacion interactiva de Swagger permite probar endpoints protegidos usando el boton `Authorize`.
+
 Autorizacion en Swagger UI:
 
 - En el boton `Authorize`, pegar solo el JWT, sin escribir `Bearer`.
 - Swagger concatena automaticamente el prefijo `Bearer`.
 - Si escribes `Bearer` manualmente en Swagger, el header puede quedar duplicado: `Authorization: Bearer Bearer ey...`.
 - En Postman o clientes HTTP manuales si debes enviar el header completo: `Authorization: Bearer <token>`.
+
+## Autenticacion JWT
+
+El flujo de autenticacion usa JWT:
+
+1. Registrar un cliente con `POST /api/auth/register` o iniciar sesion con `POST /api/auth/login`.
+2. Copiar el token recibido en `data.token`.
+3. Enviar el token en endpoints protegidos con:
+
+```text
+Authorization: Bearer <token>
+```
+
+El token incluye:
+
+- `id_usuario`
+- `correo`
+- `rol`
 
 Coleccion Postman:
 
@@ -303,6 +336,37 @@ Importante:
 - Para este despliegue inicial no se uso Docker, Nginx ni HTTPS.
 - Para produccion final se recomienda dominio, Nginx como reverse proxy y HTTPS con Let's Encrypt.
 
+## Validacion de despliegue
+
+Smoke test ejecutado satisfactoriamente contra DigitalOcean:
+
+- `GET /`
+- `GET /api/health`
+- `GET /api-docs/`
+- `POST /api/auth/login`
+- `POST /api/auth/register`
+- `GET /api/auth/perfil`
+- `GET /api/mesas`
+- `POST /api/mesas`
+- `GET /api/mesas/:id`
+- `PUT /api/mesas/:id`
+- `DELETE /api/mesas/:id`
+- `POST /api/reservaciones`
+- `GET /api/reservaciones/mis`
+- `GET /api/reservaciones`
+- `PUT /api/reservaciones/:id/estado`
+- `DELETE /api/reservaciones/:id`
+
+Resultado: `18/18` pruebas exitosas.
+
+## Capturas y referencias
+
+Referencias disponibles en el repositorio:
+
+- Landing Page publica: `http://138.68.11.235:3000/`
+- Swagger publico: `http://138.68.11.235:3000/api-docs/`
+- Coleccion Postman: `docs/postman/restaurant-reservations.postman_collection.json`
+
 ## Reglas de negocio implementadas
 
 - No se reservan mesas inactivas.
@@ -368,3 +432,15 @@ public/
   css/
     landing.css
 ```
+
+## Autor
+
+Luis Pereira
+
+Proyecto desarrollado como parte del Bootcamp Transformacion Digital para la Docencia Tecnica.
+
+Kodigo - MINEDUCYT El Salvador
+
+## Licencia
+
+MIT. Ver [LICENSE](LICENSE).
