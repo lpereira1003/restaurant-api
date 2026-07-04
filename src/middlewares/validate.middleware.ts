@@ -24,14 +24,20 @@ export const validate = (validator: Validator) => {
 };
 
 /**
- * Ejecuta schemas Zod soLos datos parseados reemplazan req.* para que controladores reciban valores normalizados.bre body, params y query.
+ * Ejecuta schemas Zod sobre body, params y query.
+ * Los datos parseados reemplazan req.* para que controladores reciban valores normalizados.
  */
 export const validateSchema = (schemas: RequestSchemas) => {
   return (req: Request, res: Response, next: NextFunction) => {
     try {
       if (schemas.body) req.body = schemas.body.parse(req.body);
       if (schemas.params) req.params = schemas.params.parse(req.params) as ParamsDictionary;
-      if (schemas.query) req.query = schemas.query.parse(req.query) as ParsedQs;
+      if (schemas.query) {
+        Object.defineProperty(req, 'query', {
+          value: schemas.query.parse(req.query) as ParsedQs,
+          configurable: true
+        });
+      }
 
       return next();
     } catch (error) {
